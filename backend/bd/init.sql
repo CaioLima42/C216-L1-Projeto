@@ -16,3 +16,9 @@ CREATE TABLE Notas (
     nota_final DECIMAL(5,2),           -- Nota final
     FOREIGN KEY (id_aluno) REFERENCES Alunos(id) ON DELETE CASCADE -- Chave estrangeira
 );
+
+
+INSERT INTO Alunos (nome, idade, mae, pai)
+VALUES ('Maria Clara Silva', 14, 'Ana Paula Silva', 'Carlos Alberto Silva');
+INSERT INTO Alunos (nome, idade, mae, pai)
+VALUES ('João Pedro Oliveira', 16, 'Mariana Oliveira', 'Rafael Oliveira');
