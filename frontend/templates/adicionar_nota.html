@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mt-4">
+    <h2 class="mb-4">Adicionar Nota</h2>
+    <form method="POST" class="row g-3">
+        <div class="col-md-6">
+            <label for="id_aluno" class="form-label">ID Aluno</label>
+            <input type="number" id="id_aluno" name="id_aluno" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+            <label for="nota1" class="form-label">Nota 1</label>
+            <input type="number" step="0.01" id="nota1" name="nota1" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+            <label for="nota2" class="form-label">Nota 2</label>
+            <input type="number" step="0.01" id="nota2" name="nota2" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+            <label for="nota_final" class="form-label">Nota Final</label>
+            <input type="number" step="0.01" id="nota_final" name="nota_final" class="form-control" required>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-success">Adicionar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
