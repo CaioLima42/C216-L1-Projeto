@@ -69,19 +69,19 @@ def adicionar_nota():
         flash("Erro ao adicionar nota!", "error")
     return render_template("adicionar_nota.html")
 
-@app.route('/reset', methods=['GET', 'POST'])
-def reset_dataset():
-    if request.method == 'POST':
-        try:
-            # Fazer requisição à rota de reset do backend
-            response = requests.delete(f"{API_URL}/reset/")
-            if response.status_code == 200:
-                flash("Dataset resetado com sucesso!", "success")
-            else:
-                flash(f"Erro ao resetar dataset: {response.json().get('detail', 'Erro desconhecido')}", "danger")
-        except Exception as e:
-            flash(f"Erro de conexão com o servidor: {str(e)}", "danger")
-    return render_template('reset.html')
+@app.route("/resetar", methods=["POST"])
+def resetar_dataset():
+    try:
+        response = requests.delete(f"{API_URL}/reset/")
+        if response.status_code == 200:
+            flash("Dataset resetado com sucesso!", "success")
+        else:
+            flash(response.json().get("detail", "Erro ao resetar dataset"), "danger")
+    except Exception as e:
+        flash(f"Erro ao conectar à API: {str(e)}", "danger")
+    return redirect(url_for("index"))
+
+
 
 
 @app.route("/notas/<int:nota_id>/editar", methods=["GET", "POST"])
@@ -112,6 +112,29 @@ def editar_nota(nota_id):
     flash("Erro ao buscar nota!", "danger")
     return redirect(url_for("listar_notas"))
 
+@app.route("/alunos/<int:aluno_id>/deletar", methods=["POST"])
+def deletar_aluno(aluno_id):
+    try:
+        response = requests.delete(f"{API_URL}/alunos/{aluno_id}")
+        if response.status_code == 200:
+            flash("Aluno e suas notas foram deletados com sucesso!", "success")
+        else:
+            flash(response.json().get("detail", "Erro ao deletar aluno"), "danger")
+    except Exception as e:
+        flash(f"Erro ao conectar à API: {str(e)}", "danger")
+    return redirect(url_for("listar_alunos"))
+
+@app.route("/notas/<int:nota_id>/deletar", methods=["POST"])
+def deletar_nota(nota_id):
+    try:
+        response = requests.delete(f"{API_URL}/notas/{nota_id}")
+        if response.status_code == 200:
+            flash("Nota deletada com sucesso!", "success")
+        else:
+            flash(response.json().get("detail", "Erro ao deletar nota"), "danger")
+    except Exception as e:
+        flash(f"Erro ao conectar à API: {str(e)}", "danger")
+    return redirect(url_for("listar_notas"))
 
 
 @app.route("/alunos/<int:aluno_id>/editar", methods=["GET", "POST"])
