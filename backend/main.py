@@ -190,13 +190,29 @@ async def atualizar_nota(nota_id: int, nota_atualizacao: NotaBase):
 async def deletar_aluno(aluno_id: int):
     conn = await get_database()
     try:
-        # Deletar notas do aluno
-        await conn.execute("DELETE FROM notas WHERE id_aluno = $1", aluno_id)
-        # Deletar aluno
-        result = await conn.execute("DELETE FROM Alunos WHERE id = $1", aluno_id)
-        if result == "DELETE 0":
-            raise HTTPException(status_code=404, detail="Aluno não encontrado.")
+        async with conn.transaction():
+            # Deletar notas do aluno
+            await conn.execute("DELETE FROM notas WHERE id_aluno = $1", aluno_id)
+            # Deletar aluno
+            result = await conn.execute("DELETE FROM alunos WHERE id = $1", aluno_id)
+            if result == "DELETE 0":
+                raise HTTPException(status_code=404, detail="Aluno não encontrado.")
         return {"message": "Aluno e suas notas foram deletados com sucesso!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Falha ao deletar aluno e notas: {str(e)}")
+    finally:
+        await conn.close()
+
+@app.delete("/api/v1/notas/{nota_id}", status_code=200)
+async def deletar_nota(nota_id: int):
+    conn = await get_database()
+    try:
+        result = await conn.execute("DELETE FROM notas WHERE id = $1", nota_id)
+        if result == "DELETE 0":
+            raise HTTPException(status_code=404, detail="Nota não encontrada.")
+        return {"message": "Nota deletada com sucesso!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Falha ao deletar nota: {str(e)}")
     finally:
         await conn.close()
 
