@@ -4,7 +4,7 @@ import requests
 app = Flask(__name__)
 app.secret_key = "chave_secreta"  # Para mensagens flash
 
-API_URL = "http://127.0.0.1:8000/api/v1"  # URL da API FastAPI
+API_URL = "http://backend:8000/api/v1"   # URL da API FastAPI
 
 # Rota para a página inicial
 @app.route("/")
@@ -82,5 +82,39 @@ def reset_dataset():
             flash(f"Erro de conexão com o servidor: {str(e)}", "danger")
     return render_template('reset.html')
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+@app.route("/alunos/<int:aluno_id>/editar", methods=["GET", "POST"])
+def editar_aluno(aluno_id):
+    if request.method == "POST":
+        nome = request.form.get("nome")
+        idade = request.form.get("idade")
+        mae = request.form.get("mae")
+        pai = request.form.get("pai")
+        data = {
+            "nome": nome if nome else None,
+            "idade": int(idade) if idade else None,
+            "mae": mae if mae else None,
+            "pai": pai if pai else None,
+        }
+        try:
+            response = requests.patch(f"{API_URL}/alunos/{aluno_id}", json=data)
+            if response.status_code == 200:
+                flash("Aluno atualizado com sucesso!", "success")
+            else:
+                flash(response.json().get("detail", "Erro ao atualizar aluno"), "danger")
+        except Exception as e:
+            flash(f"Erro ao conectar à API: {str(e)}", "danger")
+        return redirect(url_for("listar_alunos"))
+
+    # Obter dados do aluno
+    response = requests.get(f"{API_URL}/alunos/{aluno_id}")
+    if response.status_code == 200:
+        aluno = response.json()
+        return render_template("editar_aluno.html", aluno=aluno)
+    flash("Erro ao buscar aluno!", "danger")
+    return redirect(url_for("listar_alunos"))
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True, port=3000, host='0.0.0.0')

@@ -7,7 +7,7 @@ import os
 
 # Função para obter a conexão com o banco de dados PostgreSQL
 async def get_database():
-    DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/school")
+    DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/alunos")
     return await asyncpg.connect(DATABASE_URL)
 
 
@@ -58,7 +58,7 @@ async def log_requests(request: Request, call_next):
 async def adicionar_aluno(aluno: AlunoBase):
     conn = await get_database()
     try:
-        query = "INSERT INTO Alunos (nome, idade, mae, pai) VALUES ($1, $2, $3, $4) RETURNING id"
+        query = "INSERT INTO alunos (nome, idade, mae, pai) VALUES ($1, $2, $3, $4) RETURNING id"
         aluno_id = await conn.fetchval(query, aluno.nome, aluno.idade, aluno.mae, aluno.pai)
         return {"message": "Aluno adicionado com sucesso!", "id": aluno_id}
     except Exception as e:
@@ -71,7 +71,7 @@ async def adicionar_aluno(aluno: AlunoBase):
 async def listar_alunos():
     conn = await get_database()
     try:
-        query = "SELECT * FROM Alunos"
+        query = "SELECT * FROM alunos"
         rows = await conn.fetch(query)
         alunos = [dict(row) for row in rows]
         return alunos
@@ -83,7 +83,7 @@ async def listar_alunos():
 async def listar_aluno_por_id(aluno_id: int):
     conn = await get_database()
     try:
-        query = "SELECT * FROM Alunos WHERE id = $1"
+        query = "SELECT * FROM alunos WHERE id = $1"
         aluno = await conn.fetchrow(query, aluno_id)
         if aluno is None:
             raise HTTPException(status_code=404, detail="Aluno não encontrado.")
@@ -97,7 +97,7 @@ async def adicionar_nota(nota: NotaBase):
     conn = await get_database()
     try:
         # Verificar se o aluno existe
-        aluno_query = "SELECT id FROM Alunos WHERE id = $1"
+        aluno_query = "SELECT id FROM alunos WHERE id = $1"
         aluno = await conn.fetchval(aluno_query, nota.id_aluno)
         if aluno is None:
             raise HTTPException(status_code=404, detail="Aluno não encontrado.")
@@ -153,3 +153,80 @@ async def resetar_dataset():
         raise HTTPException(status_code=500, detail=f"Falha ao resetar o dataset: {str(e)}")
     finally:
         await conn.close()
+
+
+@app.delete("/api/v1/alunos/{aluno_id}", status_code=200)
+async def deletar_aluno(aluno_id: int):
+    conn = await get_database()
+    try:
+        # Deletar notas do aluno
+        await conn.execute("DELETE FROM notas WHERE id_aluno = $1", aluno_id)
+        # Deletar aluno
+        result = await conn.execute("DELETE FROM Alunos WHERE id = $1", aluno_id)
+        if result == "DELETE 0":
+            raise HTTPException(status_code=404, detail="Aluno não encontrado.")
+        return {"message": "Aluno e suas notas foram deletados com sucesso!"}
+    finally:
+        await conn.close()
+
+
+
+# Modelo para atualizar Aluno
+class AlunoUpdate(BaseModel):
+    nome: Optional[str] = None
+    idade: Optional[int] = None
+    mae: Optional[str] = None
+    pai: Optional[str] = None
+
+@app.patch("/api/v1/alunos/{aluno_id}", status_code=200)
+async def atualizar_aluno(aluno_id: int, aluno: AlunoUpdate):
+    conn = await get_database()
+    try:
+        # Atualizar apenas os campos fornecidos
+        query = """
+            UPDATE Alunos
+            SET 
+                nome = COALESCE($1, nome),
+                idade = COALESCE($2, idade),
+                mae = COALESCE($3, mae),
+                pai = COALESCE($4, pai)
+            WHERE id = $5
+        """
+        await conn.execute(query, aluno.nome, aluno.idade, aluno.mae, aluno.pai, aluno_id)
+        return {"message": "Aluno atualizado com sucesso!"}
+    finally:
+        await conn.close()
+
+class NotaUpdate(BaseModel):
+    nota1: Optional[float] = None
+    nota2: Optional[float] = None
+
+@app.patch("/api/v1/notas/{nota_id}", status_code=200)
+async def atualizar_nota(nota_id: int, nota: NotaUpdate):
+    conn = await get_database()
+    try:
+        # Calcular nota final se necessário
+        existing_nota_query = "SELECT nota1, nota2 FROM notas WHERE id = $1"
+        existing_nota = await conn.fetchrow(existing_nota_query, nota_id)
+
+        if not existing_nota:
+            raise HTTPException(status_code=404, detail="Nota não encontrada.")
+
+        nota1 = nota.nota1 if nota.nota1 is not None else existing_nota['nota1']
+        nota2 = nota.nota2 if nota.nota2 is not None else existing_nota['nota2']
+        nota_final = (nota1 + nota2) / 2
+
+        # Atualizar as notas
+        query = """
+            UPDATE notas
+            SET 
+                nota1 = $1,
+                nota2 = $2,
+                nota_final = $3
+            WHERE id = $4
+        """
+        await conn.execute(query, nota1, nota2, nota_final, nota_id)
+        return {"message": "Nota atualizada com sucesso!"}
+    finally:
+        await conn.close()
+

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mt-4">
+    <h2>Editar Aluno</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" id="nome" name="nome" class="form-control" value="{{ aluno.nome }}">
+        </div>
+        <div class="mb-3">
+            <label for="idade" class="form-label">Idade</label>
+            <input type="number" id="idade" name="idade" class="form-control" value="{{ aluno.idade }}">
+        </div>
+        <div class="mb-3">
+            <label for="mae" class="form-label">Mãe</label>
+            <input type="text" id="mae" name="mae" class="form-control" value="{{ aluno.mae }}">
+        </div>
+        <div class="mb-3">
+            <label for="pai" class="form-label">Pai</label>
+            <input type="text" id="pai" name="pai" class="form-control" value="{{ aluno.pai }}">
+        </div>
+        <button type="submit" class="btn btn-success">Salvar</button>
+    </form>
+</div>
+{% endblock %}
