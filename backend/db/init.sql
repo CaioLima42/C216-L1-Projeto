@@ -23,3 +23,5 @@ CREATE TABLE "notas" (
 -- Inserir dados iniciais
 INSERT INTO "alunos" (nome, idade, mae, pai) VALUES ('Maria Clara Silva', 14, 'Ana Paula Silva', 'Carlos Alberto Silva');
 INSERT INTO "alunos" (nome, idade, mae, pai) VALUES ('João Pedro Oliveira', 16, 'Mariana Oliveira', 'Rafael Oliveira');
+
+INSERT INTO "notas" (id_aluno, nota1, nota2, nota_final) VALUES ('2', 10, 10, 10);
