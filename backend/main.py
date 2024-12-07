@@ -37,12 +37,13 @@ class Nota(BaseModel):
     nota2: float
     nota_final: float
 
-# Modelo para adicionar Notas
+
 class NotaBase(BaseModel):
-    id_aluno: int
     nota1: float
     nota2: float
-    nota_final: float
+    id_aluno: Optional[int] = None  # Tornando opcional
+    nota_final: Optional[float] = None  # Tornando opcional
+
 
 # Middleware para logging
 @app.middleware("http")
@@ -98,6 +99,7 @@ async def adicionar_nota(nota: NotaBase):
     try:
         # Verificar se o aluno existe
         aluno_query = "SELECT id FROM alunos WHERE id = $1"
+        
         aluno = await conn.fetchval(aluno_query, nota.id_aluno)
         if aluno is None:
             raise HTTPException(status_code=404, detail="Aluno não encontrado.")
@@ -153,6 +155,35 @@ async def resetar_dataset():
         raise HTTPException(status_code=500, detail=f"Falha ao resetar o dataset: {str(e)}")
     finally:
         await conn.close()
+
+
+@app.patch("/api/v1/notas/{nota_id}")
+async def atualizar_nota(nota_id: int, nota_atualizacao: NotaBase):
+    conn = await get_database()
+    try:
+        # Verificar se a nota existe e obter o id_aluno
+        nota_query = "SELECT id_aluno FROM notas WHERE id = $1"
+        id_aluno = await conn.fetchval(nota_query, nota_id)
+        if id_aluno is None:
+            raise HTTPException(status_code=404, detail="Nota não encontrada.")
+
+        # Calcular a nova nota final como a soma de nota1 e nota2
+        nota_final = (nota_atualizacao.nota1 + nota_atualizacao.nota2) / 2
+
+        # Atualizar as notas no banco de dados
+        update_query = """
+            UPDATE notas
+            SET nota1 = $1, nota2 = $2, nota_final = $3
+            WHERE id = $4
+        """
+        await conn.execute(update_query, nota_atualizacao.nota1, nota_atualizacao.nota2, nota_final, nota_id)
+
+        return {"message": "Notas atualizadas com sucesso!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Falha ao atualizar as notas: {str(e)}")
+    finally:
+        await conn.close()
+
 
 
 @app.delete("/api/v1/alunos/{aluno_id}", status_code=200)

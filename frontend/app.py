@@ -54,7 +54,8 @@ def adicionar_nota():
         id_aluno = request.form.get("id_aluno")
         nota1 = request.form.get("nota1")
         nota2 = request.form.get("nota2")
-        nota_final = request.form.get("nota_final")
+        #nota_final = request.form.get("nota_final")
+        nota_final = (float(nota1) + float(nota2))/2
         data = {
             "id_aluno": int(id_aluno),
             "nota1": float(nota1),
@@ -81,6 +82,36 @@ def reset_dataset():
         except Exception as e:
             flash(f"Erro de conexão com o servidor: {str(e)}", "danger")
     return render_template('reset.html')
+
+
+@app.route("/notas/<int:nota_id>/editar", methods=["GET", "POST"])
+def editar_nota(nota_id):
+    if request.method == "POST":
+        nota1 = request.form.get("nota1")
+        nota2 = request.form.get("nota2")
+
+        data = {
+            "nota1": float(nota1) if nota1 else None,
+            "nota2": float(nota2) if nota2 else None
+        }
+        try:
+            response = requests.patch(f"{API_URL}/notas/{nota_id}", json=data)
+            if response.status_code == 200:
+                flash("Nota atualizada com sucesso!", "success")
+            else:
+                flash(response.json().get("detail", "Erro ao atualizar nota"), "danger")
+        except Exception as e:
+            flash(f"Erro ao conectar à API: {str(e)}", "danger")
+        return redirect(url_for("listar_notas"))
+
+    # Obter dados do aluno
+    response = requests.get(f"{API_URL}/notas/{nota_id}")
+    if response.status_code == 200:
+        nota = response.json()
+        return render_template("editar_nota.html", nota=nota)
+    flash("Erro ao buscar nota!", "danger")
+    return redirect(url_for("listar_notas"))
+
 
 
 @app.route("/alunos/<int:aluno_id>/editar", methods=["GET", "POST"])
