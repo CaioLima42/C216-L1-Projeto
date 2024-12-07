@@ -1,0 +1,361 @@
+{
+	"id": "5ec0e579-2601-4bb8-a933-f56005c111a0",
+	"name": "C216-L1-Projeto",
+	"timestamp": "2024-12-07T16:11:59.659Z",
+	"collection_id": "38408441-11eee559-10ed-4c54-8f8f-e4a29a34c804",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 17,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2024-12-07T16:11:56.603Z",
+	"totalFail": 2,
+	"results": [
+		{
+			"id": "b73aa5d6-c408-41f1-a639-9746b93c4822",
+			"name": "DELETE - Resetando",
+			"url": "http://127.0.0.1:8000/api/v1/reset/",
+			"time": 391,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response should confirm deletion": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response should confirm deletion": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				391
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response should confirm deletion": true
+				}
+			]
+		},
+		{
+			"id": "ae900d7f-23be-42f3-87cf-b84e00c3286f",
+			"name": "GET - Listar Alunos",
+			"url": "http://127.0.0.1:8000/api/v1/alunos/",
+			"time": 98,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response should be a list": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response should be a list": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				98
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response should be a list": true
+				}
+			]
+		},
+		{
+			"id": "af6e502d-0383-40ff-8ccf-9eb7ca5aeca9",
+			"name": "POST - Adicionar Aluno",
+			"url": "http://127.0.0.1:8000/api/v1/alunos/",
+			"time": 94,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Response should contain confirmation message": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response should contain confirmation message": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				94
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Response should contain confirmation message": true
+				}
+			]
+		},
+		{
+			"id": "868588ed-29af-46df-bb62-08ba17efa056",
+			"name": "POST - Adicionar Nota",
+			"url": "http://127.0.0.1:8000/api/v1/notas/",
+			"time": 102,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Response should contain confirmation message": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response should contain confirmation message": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				102
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Response should contain confirmation message": true
+				}
+			]
+		},
+		{
+			"id": "fb1ad2d9-da0d-421c-8b66-6db788017aa6",
+			"name": "GET - Listar Notas",
+			"url": "http://127.0.0.1:8000/api/v1/notas/",
+			"time": 91,
+			"responseCode": {
+				"code": 500,
+				"name": "Internal Server Error"
+			},
+			"tests": {
+				"Status code is 200": false,
+				"Response should be a list": false
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 0,
+					"fail": 1
+				},
+				"Response should be a list": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				91
+			],
+			"allTests": [
+				{
+					"Status code is 200": false,
+					"Response should be a list": false
+				}
+			]
+		},
+		{
+			"id": "af2b9d24-ba3a-43ea-b471-7798b80a782b",
+			"name": "PATCH - Atualizando Aluno",
+			"url": "http://127.0.0.1:8000/api/v1/alunos/1",
+			"time": 88,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response should confirm update": true,
+				"Os atributos do aluno foram atualizados": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response should confirm update": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Os atributos do aluno foram atualizados": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				88
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response should confirm update": true,
+					"Os atributos do aluno foram atualizados": true
+				}
+			]
+		},
+		{
+			"id": "c638e63b-fb2a-4543-b2b6-bfba4ff5a0bb",
+			"name": "PATCH - Atualizando Nota",
+			"url": "http://127.0.0.1:8000/api/v1/notas/1",
+			"time": 93,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response should confirm update": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response should confirm update": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				93
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response should confirm update": true
+				}
+			]
+		},
+		{
+			"id": "e5f55f00-2a63-4174-ad17-35507b9dade4",
+			"name": "DELETE - Remover Aluno e suas Notas",
+			"url": "http://127.0.0.1:8000/api/v1/alunos/1",
+			"time": 98,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response should confirm deletion": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response should confirm deletion": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				98
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response should confirm deletion": true
+				}
+			]
+		},
+		{
+			"id": "343af965-405e-486b-9e83-5f469a693063",
+			"name": "DELETE - Remover Nota",
+			"url": "http://127.0.0.1:8000/api/v1/notas/1",
+			"time": 91,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response should confirm deletion": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response should confirm deletion": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				91
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response should confirm deletion": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 1146,
+	"collection": {
+		"requests": [
+			{
+				"id": "b73aa5d6-c408-41f1-a639-9746b93c4822",
+				"method": "DELETE"
+			},
+			{
+				"id": "ae900d7f-23be-42f3-87cf-b84e00c3286f",
+				"method": "GET"
+			},
+			{
+				"id": "af6e502d-0383-40ff-8ccf-9eb7ca5aeca9",
+				"method": "POST"
+			},
+			{
+				"id": "868588ed-29af-46df-bb62-08ba17efa056",
+				"method": "POST"
+			},
+			{
+				"id": "fb1ad2d9-da0d-421c-8b66-6db788017aa6",
+				"method": "GET"
+			},
+			{
+				"id": "af2b9d24-ba3a-43ea-b471-7798b80a782b",
+				"method": "PATCH"
+			},
+			{
+				"id": "c638e63b-fb2a-4543-b2b6-bfba4ff5a0bb",
+				"method": "PATCH"
+			},
+			{
+				"id": "e5f55f00-2a63-4174-ad17-35507b9dade4",
+				"method": "DELETE"
+			},
+			{
+				"id": "343af965-405e-486b-9e83-5f469a693063",
+				"method": "DELETE"
+			}
+		]
+	}
+}
