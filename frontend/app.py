@@ -68,5 +68,19 @@ def adicionar_nota():
         flash("Erro ao adicionar nota!", "error")
     return render_template("adicionar_nota.html")
 
+@app.route('/reset', methods=['GET', 'POST'])
+def reset_dataset():
+    if request.method == 'POST':
+        try:
+            # Fazer requisição à rota de reset do backend
+            response = requests.delete(f"{API_URL}/reset/")
+            if response.status_code == 200:
+                flash("Dataset resetado com sucesso!", "success")
+            else:
+                flash(f"Erro ao resetar dataset: {response.json().get('detail', 'Erro desconhecido')}", "danger")
+        except Exception as e:
+            flash(f"Erro de conexão com o servidor: {str(e)}", "danger")
+    return render_template('reset.html')
+
 if __name__ == "__main__":
     app.run(debug=True)

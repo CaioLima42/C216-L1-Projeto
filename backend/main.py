@@ -58,7 +58,7 @@ async def log_requests(request: Request, call_next):
 async def adicionar_aluno(aluno: AlunoBase):
     conn = await get_database()
     try:
-        query = "INSERT INTO alunos (nome, idade, mae, pai) VALUES ($1, $2, $3, $4) RETURNING id"
+        query = "INSERT INTO Alunos (nome, idade, mae, pai) VALUES ($1, $2, $3, $4) RETURNING id"
         aluno_id = await conn.fetchval(query, aluno.nome, aluno.idade, aluno.mae, aluno.pai)
         return {"message": "Aluno adicionado com sucesso!", "id": aluno_id}
     except Exception as e:
@@ -71,7 +71,7 @@ async def adicionar_aluno(aluno: AlunoBase):
 async def listar_alunos():
     conn = await get_database()
     try:
-        query = "SELECT * FROM alunos"
+        query = "SELECT * FROM Alunos"
         rows = await conn.fetch(query)
         alunos = [dict(row) for row in rows]
         return alunos
@@ -83,7 +83,7 @@ async def listar_alunos():
 async def listar_aluno_por_id(aluno_id: int):
     conn = await get_database()
     try:
-        query = "SELECT * FROM alunos WHERE id = $1"
+        query = "SELECT * FROM Alunos WHERE id = $1"
         aluno = await conn.fetchrow(query, aluno_id)
         if aluno is None:
             raise HTTPException(status_code=404, detail="Aluno não encontrado.")
@@ -97,7 +97,7 @@ async def adicionar_nota(nota: NotaBase):
     conn = await get_database()
     try:
         # Verificar se o aluno existe
-        aluno_query = "SELECT id FROM alunos WHERE id = $1"
+        aluno_query = "SELECT id FROM Alunos WHERE id = $1"
         aluno = await conn.fetchval(aluno_query, nota.id_aluno)
         if aluno is None:
             raise HTTPException(status_code=404, detail="Aluno não encontrado.")
@@ -134,5 +134,22 @@ async def listar_notas_por_aluno(aluno_id: int):
             raise HTTPException(status_code=404, detail="Notas não encontradas para o aluno.")
         notas = [dict(row) for row in rows]
         return notas
+    finally:
+        await conn.close()
+        
+# 7. Resetar dataset
+@app.delete("/api/v1/reset/")
+async def resetar_dataset():
+    init_sql = os.getenv("INIT_SQL", "db/init.sql")  # Caminho para o arquivo SQL
+    conn = await get_database()
+    try:
+        # Ler comandos SQL do arquivo
+        with open(init_sql, 'r') as file:
+            sql_commands = file.read()
+        # Executar comandos SQL
+        await conn.execute(sql_commands)
+        return {"message": "Dataset resetado com sucesso!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Falha ao resetar o dataset: {str(e)}")
     finally:
         await conn.close()
